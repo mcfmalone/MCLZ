@@ -1,0 +1,114 @@
+.\" $Id: lzmcro.1,v 1.2 2014/04/29 14:50:48 lyonsd Exp $
+.\" $Log: lzmcro.1,v $
+.\" Revision 1.2  2014/04/29 14:50:48  lyonsd
+.\" *** empty log message ***
+.\"
+.\" Revision 1.1  2014/04/22 04:58:03  lyonsd
+.\" Minor changes.
+.\"
+.\" Revision 1.0  2014/03/30 19:17:43  lyonsd
+.\" Initial revision
+.\"
+.TH LZMCRO 1 "30 Mar 2014" "lzmcro 11.6" "MCLZ Commands"
+.SH NAME
+lzmcro \- Landau-Zener Multi Channel Cross Sections
+.SH SYNOPSIS
+.B lzmcro
+[
+.I options
+]
+.SH DESCRIPTION
+.B lzmcro
+is used to calculate cross section data from a single-electron capture collision between a highly-charged ion and a neutral atom, using the Multi-Channel Landau-Zener
+.SM (MCLZ)
+method.
+.PP
+.B lzmcro
+accepts input from STDIN, and writes to STDOUT.  However, input and output files can be specified with command line options (see below).
+.PP
+.B lzmcro
+was written to accept output from
+.BR lzdata (1)
+either by piping from
+.BR lzdata (1)
+to
+.B lzmcro
+or by reading the data file produced by
+.BR lzdata (1)
+.SH OPTIONS
+.TP
+.BI \-\^i \ file
+Input data will read from 
+.IR file .
+If this option is omitted,
+.B lzmcro
+will read the input data from STDIN.
+.TP
+.BI \-\^o \ file
+Output data will be written to 
+.IR file .
+If this option is omitted,
+.B lzmcro
+will write the output data to STDOUT.
+.TP
+.B \-v
+Version will be written to STDERR, and
+.B lzmcro
+will exit.
+.TP
+.B \-t
+Execution time will be written to STDERR.
+.TP
+.B \-m
+Prints this man page.  No other processing will take place if this option is used.
+.SH EXIT STATUS
+.TP
+0
+if successful completion.
+.SH EXAMPLE
+Read input data from
+.I fort.3
+and write output data to
+.I fort.15
+using command-line options:
+.P
+.nf
+.RS
+lzmcro -i fort.3 -o fort.15
+.RE
+.fi
+.P
+Read input data from
+.I fort.3
+and write output data to
+.I fort.15
+using redirection:
+.P
+.nf
+.RS
+lzmcro < fort.3 > fort.15
+.RE
+.fi
+.P
+Read data from the output of
+.BR lzdata (1)
+and view the output in the
+.BR vi (1)
+editor:
+.P
+.nf
+.RS
+lzdata | lzmcro | vi -
+.RE
+.fi
+
+.SH SEE ALSO
+.BR lzdata (1),
+.BR mknlrescs (1),
+.BR mknrescs (1)
+.SH AUTHOR
+Phillip Stancil <stancil@physast.uga.edu>
+.br
+David Lyons <lyonsd@gmail.com>
+.SH COPYRIGHT
+Copyright © Univeristy of Georgia, Department of Physics and Astronomy

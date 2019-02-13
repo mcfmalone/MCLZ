@@ -1,0 +1,165 @@
+.\" $Id: lzdata.1,v 1.1 2014/04/22 04:58:03 lyonsd Exp $
+.\" $Log: lzdata.1,v $
+.\" Revision 1.1  2014/04/22 04:58:03  lyonsd
+.\" Initial revision
+.\"
+.\"
+.TH LZDATA 1 "21 Apr 2014" "lzdata 1.0" "MCLZ Commands"
+.SH NAME
+lzdata \- Landau-Zener Multi Channel Avoided Crossing Data
+.SH SYNOPSIS
+.B lzdata
+[
+.I options
+]
+.SH DESCRIPTION
+.B lzdata
+is used to calculate the avoided crossings from the energy levels of a highly charged ion in a single electron capture interaction with a neutral atom.
+.PP
+.B lzdata
+accepts input from STDIN, and writes to STDOUT.  However, input and output files can be specified with command line options (see below).
+.PP
+.B lzdata
+reads NIST data input as illustrated by the example below:
+.PP
+2s	²S	 0.5	0.000000
+.br
+2p	²S°	 2.5	274077.333333
+.br
+3s	²S	 0.5	4176030.000000
+.br
+3p	²P°	 2.5	4251770.000000
+.br
+3d	²D	 4.5	4282548.000000
+.br
+4s	²S	 0.5	5605700.000000
+.br
+4p	²P°	 2.5	5636866.666667
+.br
+4d	²D	 4.5	5649342.000000
+.br
+5s	²S	 0.5	6259530.000000
+.br
+5p	²P°	 2.5	6275900.000000
+.br
+5d	²D	 4.5	6282458.000000
+.br
+--	--	 0.0	7407190.0
+.PP
+Note: these columns are separated by TABs.
+.PP
+The first is the \fInl\fR configuration of the electron in the last orbital.  This configuration is represented by two quantum numbers: \fIn\fR and \fIl\fR, where \fIn\fR is the primary quantum number, and \fIl\fR is the azimuthal quantum number, which is typically represented by letters:
+.PP
+.I s
+= 0
+.br
+.I p
+= 1
+.br
+.I d
+= 2
+.br
+.I f
+= 3
+.br
+.I g
+= 4
+.br
+.I h
+= 5
+.br
+and so on...
+.PP
+The second column is Russell-Saunders term symbol, which is an abbreviated description of the angular momentum quantum numbers in a multi-electron atom/ion.  The first number in the term is usually a superscript, and is the spin multiplicity, which is given by 2\fIS\fR+1, and which represents the maximum number of possible states of \fIJ\fR for a given (
+.IR L , S
+) combination.  Where
+.IR J ,
+is the total angular momentum quantum number, \fIS\fR is the total spin quantum number, and 
+.I L
+is the total orbital quantum number, which is the uppercase letter in the term. If the term has a '*' or °, then it has odd parity.
+.PP
+The third column is 
+.IR j ,
+the total angular momentum quantum number, which is given as
+.IR j = s + l ,
+where
+.I s
+is the spin quantum number.
+.PP
+The fourth column contains the energy levels (in units of 1/cm) of the given configuration (note that these units will be converted to Hartrees (au), so it is important to keep them in wave number units (1/cm)).  The last row contains the ionization potential for this ion/atom.  For the other columns in the last row, use '--'.  For the \fIj\fR term, 0.0 or any number is acceptable; none of the \fIj\fR values are used in any calculations.
+.SH OPTIONS
+.TP
+.BI \-\^i \ NISTfile
+Input data will read from \fINISTfile\fR.  If this option is omitted, \fBlzdata\fR will read the NIST data from STDIN.
+.TP
+.BI \-\^o \ file
+Output data will be written to 
+.IR file .
+If this option is omitted, \fBlzdata\fR will write the output data to STDOUT.
+.TP
+.B \-v
+Version will be written to STDERR, and
+.B lzdata
+will exit.
+.TP
+.B \-m
+Prints this man page.  No other processing will take place if this option is used.
+.TP
+.BR \-A \ «atom»
+This option tells the program what the neutral atom is (H, He, Li, etc...[note the symbol is case sensitive)]).  Critical parameters associated with the given neutral atom are read from an auxiliary date file \fIelements.dat\fR [\fBelements.dat\fR(5)] .
+.TP
+.BR \-I \ «ion»
+This option tells the program what the charged ion is (H, He, Li, etc...[note the symbol is case sensitive)]).  Critical parameters associated with the given charged ion are read from an auxiliary date file \fIelements.dat\fR [\fBelements.dat\fR(5)].
+.TP
+.BR \-Z \ «z»
+This option tells the program what the charge of the charged ion is.  The parameter should be an integer value.  The charge cannot be greater than the atomic number of the ion.
+.TP
+.B \-s
+If this option is used, then it tells \fBlzdata\fR that \fIsinglets\fR are being processed.  The degeneracy factor of the incoming channel will be set to 0.25.
+.TP
+.B \-t
+If this option is used, then it tells \fBlzdata\fR that \fItriplets\fR are being processed.  The degeneracy factor of the incoming channel will be set to 0.75.
+
+If neither triplets not singlets are specified, then the degeneracy factor will be set to 1.0.  If both triplets and singlets are specified, then the program will terminate.
+.SH EXIT STATUS
+.TP
+0
+if successful completion.
+.SH EXAMPLE
+Assuming the collision system is Mg^10+ + H, read NIST input data from \fImg10.nist.in\fR and write output data to \fIfort.3\fR using command-line options:
+.P
+.nf
+.RS
+lzdata -i mg10.nist.in -o fort.3 -I Mg -Z 10 -A H
+.RE
+.fi
+.P
+The same system and files as above, but using redirection:
+.P
+.nf
+.RS
+lzdata < mg10.nist.in > fort.3 -I Mg -Z 10 -A H
+.RE
+.fi
+.P
+Same system as above, but pipe output to
+.BR lzmcro (1)
+and view the output in the
+.BR vi (1)
+editor:
+.P
+.nf
+.RS
+lzdata -i mg10.nist.in -I Mg -Z 10 -A H | lzmcro | vi -
+.RE
+.fi
+.SH SEE ALSO
+.BR lzmcro (1),
+.BR mknlrescs (1),
+.BR mknrescs (1)
+.SH AUTHOR
+Phillip Stancil <stancil@physast.uga.edu>
+.br
+David Lyons <lyonsd@gmail.com>
+.SH COPYRIGHT
+Copyright © Univeristy of Georgia, Department of Physics and Astronomy

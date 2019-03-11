@@ -1,9 +1,12 @@
 #!/usr/bin/python
 """
-$Id: stueckelberg.py,v 1.1 2019/02/28 23:49:05 micha Exp micha $
+$Id: stueckelberg.py,v 1.2 2019/03/09 20:27:26 micha Exp micha $
 $Author: micha $
-$Revision: 1.1 $
+$Revision: 1.2 $
 $Log: stueckelberg.py,v $
+Revision 1.2  2019/03/09 20:27:26  micha
+Updated to use ldist.py instead of mclzldist.exe.
+
 Revision 1.1  2019/02/28 23:49:05  micha
 Initial revision
 
@@ -143,10 +146,13 @@ def mclzldist(a,f):
         nmax=int(max(n))
         nmin=int(min(n))
         mclzldistcmd="mclzldist %d %d %s %s"%(nmin,nmax,f["xs"],f["base"])
-        if(a.Verbose):print(mclzldistcmd)
         rv=Run_it(a,mclzldistcmd)
     return rv
-    
+
+def ldist(a,f):
+    ldistcmd="ldist.py -ls %s"%f["cs1"]
+    rv=Run_it(a,ldistcmd)
+    return rv
 
 # Run it, a simple function to run a command, specified by string s,
 # and exit if the return value is not 0.
@@ -169,7 +175,8 @@ def main(argv):
     lzmcro(args,f)
     mknlrescs(args,f)
     mknrescs(args,f)
-    mclzldist(args,f)
+#    mclzldist(args,f)
+    ldist(args,f)
     return 0
 
 if __name__=="__main__":
